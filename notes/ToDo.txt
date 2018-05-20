@@ -1,0 +1,15 @@
+The submission file must associate each hit in each event to one and only one reconstructed particle track.
+The reconstructed tracks must be uniquely identified only within each event.
+Participants are advised to compress the submission file (with zip, bzip2, gzip) before submission to the Kaggle site.
+
+event_id: numerical identifier of the event; corresponds to the number found in the per-event file name prefix.
+hit_id: numerical identifier of the hit inside the event as defined in the per-event hits file.
+track_id: user-defined numerical identifier (non-negative integer) of the track.
+
+------------------------------------------------------------------------------------------------------------------------
+
+1) associate evry hit in every event with a corresponding particle
+2) this way, connect hits associated with the same particle to the same track
+
+learning objective: predict tracks for all particles.
+supervised learning for time series: input is particle id, particle origin, and output are the hits in the particles track.
