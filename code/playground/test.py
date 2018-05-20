@@ -8,8 +8,8 @@ from trackml.score import score_event
 if __name__ == "__main__":
 
     # training and test data folder paths
-    train_data_folder_path = "../data/raw/train_sample/train_100_events"
-    num_events = 2
+    train_data_folder_path = "../../data/raw/train_sample/train_100_events"
+    num_events = 1
 
     # loop through events
     p_ids = np.array(0)
@@ -24,10 +24,13 @@ if __name__ == "__main__":
         # read data
         hits, cells, particles, truth = load_event(os.path.join(train_data_folder_path, event_prefix))
 
-        print(hits.head())
-        print(cells.head())
+        # print(hits.head())
+        # print(cells.head())
         print(particles.head())
-        print(truth.head())
+        # print(truth.head())
+
+        particle_idx = np.where(particles["particle_id"].values == 4503943224754176)[0][0]
+        print(particles[particle_idx:particle_idx+1])
         quit()
 
         particle_ids = particles["particle_id"].values
