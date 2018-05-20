@@ -26,8 +26,8 @@ if __name__ == "__main__":
 
         # print(hits.head())
         # print(cells.head())
-        print(particles.head())
-        # print(truth.head())
+        # print(particles.head())
+        print(truth.head())
 
         particle_idx = np.where(particles["particle_id"].values == 4503943224754176)[0][0]
         print(particles[particle_idx:particle_idx+1])

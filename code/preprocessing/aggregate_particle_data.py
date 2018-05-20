@@ -3,8 +3,8 @@ import h5py
 import numpy as np
 import json
 
-from trackml.dataset import load_event, load_dataset
-from trackml.score import score_event
+from trackml.dataset import load_event
+
 
 if __name__ == "__main__":
 
@@ -31,7 +31,7 @@ if __name__ == "__main__":
             event_prefix = "event0000010" + str_i_event
 
         print("reading data from {0} ({1}/{2})".format(event_prefix, i_event+1, num_events))
-        _, _, particles, _ = load_event(os.path.join(train_data_folder_path, event_prefix))
+        hits, cells, particles, truth = load_event(os.path.join(train_data_folder_path, event_prefix))
 
         # aggregate info of particles
         for i_particle, particle_id in enumerate(particle_ids):

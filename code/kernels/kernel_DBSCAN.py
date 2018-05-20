@@ -2,7 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 
-from trackml.dataset import load_event, load_dataset
+from trackml.dataset import load_event
 from trackml.score import score_event
 
 from sklearn.preprocessing import StandardScaler

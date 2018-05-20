@@ -28,115 +28,115 @@ if __name__ == "__main__":
                  + truth.memory_usage(index=True).sum())
     print('{} memory usage {:.2f} MB'.format(event_prefix, mem_bytes / 2 ** 20))
 
-    # # plot x-y plane
-    # g = sns.jointplot(hits.x, hits.y, s=1, size=12)
-    # g.ax_joint.cla()
-    # plt.sca(g.ax_joint)
-    #
-    # volumes = hits.volume_id.unique()
-    # for volume in volumes:
-    #     v = hits[hits.volume_id == volume]
-    #     plt.scatter(v.x, v.y, s=3, label='volume {}'.format(volume))
-    #
-    # plt.xlabel('X (mm)')
-    # plt.ylabel('Y (mm)')
-    # plt.legend()
-    # plt.show()
-    #
-    # # plot y-z plane
-    # g = sns.jointplot(hits.z, hits.y, s=1, size=12)
-    # g.ax_joint.cla()
-    # plt.sca(g.ax_joint)
-    #
-    # volumes = hits.volume_id.unique()
-    # for volume in volumes:
-    #     v = hits[hits.volume_id == volume]
-    #     plt.scatter(v.z, v.y, s=3, label='volume {}'.format(volume))
-    #
-    # plt.xlabel('Z (mm)')
-    # plt.ylabel('Y (mm)')
-    # plt.legend()
-    # plt.show()
+    # plot x-y plane
+    g = sns.jointplot(hits.x, hits.y, s=1, size=12)
+    g.ax_joint.cla()
+    plt.sca(g.ax_joint)
 
-    # # plot 3D
-    # fig = plt.figure(figsize=(12, 12))
-    # ax = fig.add_subplot(111, projection='3d')
-    # volumes = hits.volume_id.unique()
-    # for volume in volumes:
-    #     v = hits[hits.volume_id == volume]
-    #     ax.scatter(v.z, v.x, v.y, s=1, label='volume {}'.format(volume), alpha=0.5)
-    # ax.set_title('Hit Locations')
-    # ax.set_xlabel('Z (millimeters)')
-    # ax.set_ylabel('X (millimeters)')
-    # ax.set_zlabel('Y (millimeters)')
-    # plt.show()
+    volumes = hits.volume_id.unique()
+    for volume in volumes:
+        v = hits[hits.volume_id == volume]
+        plt.scatter(v.x, v.y, s=3, label='volume {}'.format(volume))
 
-    # # plot affected surface objects
-    # hits_sample = hits.sample(8000)
-    # sns.pairplot(hits_sample, hue='volume_id', size=8)
-    # plt.show()
+    plt.xlabel('X (mm)')
+    plt.ylabel('Y (mm)')
+    plt.legend()
+    plt.show()
 
-    # # plot hit rate and charge distributions
-    # plt.figure(figsize=(15, 5))
-    # plt.subplot(1, 2, 1)
-    # sns.distplot(particles.nhits.values, axlabel='Hits/Particle', bins=50)
-    # plt.title('Distribution of number of hits per particle for event 1000.')
-    # plt.subplot(1, 2, 2)
-    # plt.pie(particles.groupby('q')['vx'].count(),
-    #         labels=['negative', 'positive'],
-    #         autopct='%.0f%%',
-    #         shadow=False,
-    #         radius=1.0)
-    # plt.title('Distribution of particle charges.')
-    # plt.show()
+    # plot y-z plane
+    g = sns.jointplot(hits.z, hits.y, s=1, size=12)
+    g.ax_joint.cla()
+    plt.sca(g.ax_joint)
 
-    # # plot initial particale positions in x-y plane
-    # g = sns.jointplot(particles.vx, particles.vy, s=3, size=12)
-    # g.ax_joint.cla()
-    # plt.sca(g.ax_joint)
-    #
-    # n_hits = particles.nhits.unique()
-    # for n_hit in n_hits:
-    #     p = particles[particles.nhits == n_hit]
-    #     plt.scatter(p.vx, p.vy, s=3, label='Hits {}'.format(n_hit))
-    #
-    # plt.xlabel('X (mm)')
-    # plt.ylabel('Y (mm)')
-    # plt.legend()
-    # plt.show()
+    volumes = hits.volume_id.unique()
+    for volume in volumes:
+        v = hits[hits.volume_id == volume]
+        plt.scatter(v.z, v.y, s=3, label='volume {}'.format(volume))
 
-    # # # plot initial particale positions in y-z plane
-    # g = sns.jointplot(particles.vz, particles.vy, s=3, size=12)
-    # g.ax_joint.cla()
-    # plt.sca(g.ax_joint)
-    #
-    # n_hits = particles.nhits.unique()
-    # for n_hit in n_hits:
-    #     p = particles[particles.nhits == n_hit]
-    #     plt.scatter(p.vz, p.vy, s=3, label='Hits {}'.format(n_hit))
-    #
-    # plt.xlabel('Z (mm)')
-    # plt.ylabel('Y (mm)')
-    # plt.legend()
-    # plt.show()
+    plt.xlabel('Z (mm)')
+    plt.ylabel('Y (mm)')
+    plt.legend()
+    plt.show()
 
-    # # plot initial particle positions in 3d
-    # fig = plt.figure(figsize=(12, 12))
-    # ax = fig.add_subplot(111, projection='3d')
-    # for charge in [-1, 1]:
-    #     q = particles[particles.q == charge]
-    #     ax.scatter(q.vz, q.vx, q.vy, s=1, label='Charge {}'.format(charge), alpha=0.5)
-    # ax.set_title('Sample of 1000 Particle initial location')
-    # ax.set_xlabel('Z (millimeters)')
-    # ax.set_ylabel('X (millimeters)')
-    # ax.set_zlabel('Y (millimeters)')
-    # ax.legend()
-    # plt.show()
-    #
-    # # plot pair plot
-    # p_sample = particles.sample(8000)
-    # sns.pairplot(p_sample, vars=['particle_id', 'vx', 'vy', 'vz', 'px', 'py', 'pz', 'nhits'], hue='nhits', size=8)
-    # plt.show()
+    # plot 3D
+    fig = plt.figure(figsize=(12, 12))
+    ax = fig.add_subplot(111, projection='3d')
+    volumes = hits.volume_id.unique()
+    for volume in volumes:
+        v = hits[hits.volume_id == volume]
+        ax.scatter(v.z, v.x, v.y, s=1, label='volume {}'.format(volume), alpha=0.5)
+    ax.set_title('Hit Locations')
+    ax.set_xlabel('Z (millimeters)')
+    ax.set_ylabel('X (millimeters)')
+    ax.set_zlabel('Y (millimeters)')
+    plt.show()
+
+    # plot affected surface objects
+    hits_sample = hits.sample(8000)
+    sns.pairplot(hits_sample, hue='volume_id', size=8)
+    plt.show()
+
+    # plot hit rate and charge distributions
+    plt.figure(figsize=(15, 5))
+    plt.subplot(1, 2, 1)
+    sns.distplot(particles.nhits.values, axlabel='Hits/Particle', bins=50)
+    plt.title('Distribution of number of hits per particle for event 1000.')
+    plt.subplot(1, 2, 2)
+    plt.pie(particles.groupby('q')['vx'].count(),
+            labels=['negative', 'positive'],
+            autopct='%.0f%%',
+            shadow=False,
+            radius=1.0)
+    plt.title('Distribution of particle charges.')
+    plt.show()
+
+    # plot initial particale positions in x-y plane
+    g = sns.jointplot(particles.vx, particles.vy, s=3, size=12)
+    g.ax_joint.cla()
+    plt.sca(g.ax_joint)
+
+    n_hits = particles.nhits.unique()
+    for n_hit in n_hits:
+        p = particles[particles.nhits == n_hit]
+        plt.scatter(p.vx, p.vy, s=3, label='Hits {}'.format(n_hit))
+
+    plt.xlabel('X (mm)')
+    plt.ylabel('Y (mm)')
+    plt.legend()
+    plt.show()
+
+    # # plot initial particale positions in y-z plane
+    g = sns.jointplot(particles.vz, particles.vy, s=3, size=12)
+    g.ax_joint.cla()
+    plt.sca(g.ax_joint)
+
+    n_hits = particles.nhits.unique()
+    for n_hit in n_hits:
+        p = particles[particles.nhits == n_hit]
+        plt.scatter(p.vz, p.vy, s=3, label='Hits {}'.format(n_hit))
+
+    plt.xlabel('Z (mm)')
+    plt.ylabel('Y (mm)')
+    plt.legend()
+    plt.show()
+
+    # plot initial particle positions in 3d
+    fig = plt.figure(figsize=(12, 12))
+    ax = fig.add_subplot(111, projection='3d')
+    for charge in [-1, 1]:
+        q = particles[particles.q == charge]
+        ax.scatter(q.vz, q.vx, q.vy, s=1, label='Charge {}'.format(charge), alpha=0.5)
+    ax.set_title('Sample of 1000 Particle initial location')
+    ax.set_xlabel('Z (millimeters)')
+    ax.set_ylabel('X (millimeters)')
+    ax.set_zlabel('Y (millimeters)')
+    ax.legend()
+    plt.show()
+
+    # plot pair plot
+    p_sample = particles.sample(8000)
+    sns.pairplot(p_sample, vars=['particle_id', 'vx', 'vy', 'vz', 'px', 'py', 'pz', 'nhits'], hue='nhits', size=8)
+    plt.show()
 
     # plot reconstructed particle trajectories
     # Get particle id with max number of hits in this event
