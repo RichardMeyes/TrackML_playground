@@ -8,8 +8,20 @@ track_id: user-defined numerical identifier (non-negative integer) of the track.
 
 ------------------------------------------------------------------------------------------------------------------------
 
-1) associate evry hit in every event with a corresponding particle
+1) associate every hit in every event with a corresponding particle
 2) this way, connect hits associated with the same particle to the same track
 
 learning objective: predict tracks for all particles.
 supervised learning for time series: input is particle id, particle origin, and output are the hits in the particles track.
+ToDo: revise objective as particle information is not available for the test set!
+New idea: for all particles in all events: fit trajectory, than in the test data, for each hit, calculate the distance to
+all trajectories so that each point has a probability of how like it belongs to a trajectory,
+
+------------------------------------------------------------------------------------------------------------------------
+
+ToDo: find out if particle_ids occur repeatedly across events
+within a single event's truth file, one particle may have several hits
+within a single event, there are particle_ids in the particles file that were never detected
+sanity check: there are no particles detected that are not found in the thruth file
+[!!!] across events, a single particle_id may be detected, i.e. information about a single particle and its trajectories can be gathered across events!
+e.g. 1565/1312 particles that are in the particles/truth file in event 1001 are also found in event 1000
