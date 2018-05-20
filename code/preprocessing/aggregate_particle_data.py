@@ -1,7 +1,6 @@
 import os
 import h5py
 import numpy as np
-import pandas as pd
 import json
 
 from trackml.dataset import load_event, load_dataset
@@ -24,7 +23,7 @@ if __name__ == "__main__":
     for particle_id in particle_ids:
         particle_info[str(particle_id)] = {"vx": [], "vy": [], "vz": [], "px": [], "py": [], "pz": [], "q": [], "nhits": []}
 
-    for i_event in range(5):
+    for i_event in range(num_events):
         str_i_event = str(i_event)
         if len(str_i_event) == 1:
             event_prefix = "event00000100" + str_i_event
