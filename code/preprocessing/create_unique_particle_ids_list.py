@@ -1,10 +1,8 @@
 import os
 import h5py
 import numpy as np
-import pandas as pd
 
-from trackml.dataset import load_event, load_dataset
-from trackml.score import score_event
+from trackml.dataset import load_event
 
 if __name__ == "__main__":
 
