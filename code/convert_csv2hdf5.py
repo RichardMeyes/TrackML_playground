@@ -10,14 +10,14 @@ if __name__ == "__main__":
     test_data_folder_path = "../data/raw/test/test/"
 
     # loop through data folders
-    for data_folder_path in [test_data_folder_path]:
+    for data_folder_path in [train_data_folder_path, test_data_folder_path]:
         # get a list with all data files
         f_list = os.listdir(data_folder_path)
         num_files = len(f_list)
 
         # create hdf5 file if it does not already exist
-        fp_train_data_hdf5 = "../data/preprocessed/train_sample/train_100_events.hdf5"
-        fp_test_data_hdf5 = "../data/preprocessed/test/test.hdf5"
+        fp_train_data_hdf5 = "../data/converted/train_sample/train_100_events.hdf5"
+        fp_test_data_hdf5 = "../data/converted/test/test.hdf5"
         if data_folder_path == train_data_folder_path:
             fp_hdf5 = fp_train_data_hdf5
         elif data_folder_path == test_data_folder_path:
@@ -37,5 +37,3 @@ if __name__ == "__main__":
                 df = pd.read_csv(file_path)
                 f_hdf5.create_dataset(file_name, data=df)
                 print("parsed file {0}/{1}".format(i+1, num_files))
-
-
