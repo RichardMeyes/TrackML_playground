@@ -45,7 +45,8 @@ if __name__ == "__main__":
                 particle_id_idx = np.where(truth["particle_id"].values == particle_id)[0]
                 event_hit_ids = particle_id_idx + 1
                 # enrich aggregated particle data with event hit ids
-                particle_info[str(particle_id)]["hit_list"] = {}
+                if "hit_list" not in particle_info[str(particle_id)].keys():
+                    particle_info[str(particle_id)]["hit_list"] = {}
                 particle_info[str(particle_id)]["hit_list"][event_prefix] = event_hit_ids.tolist()
 
     # save enriched aggregated particle data
