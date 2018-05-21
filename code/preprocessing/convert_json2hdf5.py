@@ -74,4 +74,4 @@ if __name__ == "__main__":
         particle_info = json.load(f)
 
     print("conveting json to hdf5...")
-    save_dict_to_hdf5(particle_info, "../../data/preprocessed/train_sample/test.hdf5")
+    save_dict_to_hdf5(particle_info, "../../data/preprocessed/train_sample/aggregated_particle_data.hdf5")
