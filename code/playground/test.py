@@ -2,27 +2,24 @@ import os
 import json
 import h5py
 import numpy as np
-import pandas as pd
 
 from trackml.dataset import load_event, load_dataset
 from trackml.score import score_event
 
 if __name__ == "__main__":
 
-    with h5py.File("../../data/preprocessed/train_sample/train_100_events.hdf5", "r") as f:
-        particle_ids = f["particle_ids"][...]
-
-    print("reading further enriched aggregated particle data...")  # load about 6.5 GB into RAM!
-    with open("../../data/preprocessed/train_sample/further_enriched_aggregated_particle_data.json", "r") as f:
-        particle_info = json.load(f)
-
-    particle_id = particle_ids[1]
-    print(particle_info[str(particle_id)].keys())
-    quit()
+    # with h5py.File("../../data/preprocessed/train_sample/train_100_events.hdf5", "r") as f:
+    #     particle_ids = f["particle_ids"][...]
+    #
+    # print("reading further enriched aggregated particle data...")  # load about 6.5 GB into RAM!
+    # with open("../../data/preprocessed/train_sample/further_enriched_aggregated_particle_data.json", "r") as f:
+    #     particle_info = json.load(f)
+    #
+    # particle_id = particle_ids[1]
+    # print(particle_info[str(particle_id)].keys())
+    # quit()
 
     # loop through events
-    p_ids = np.array(0)
-    p_ids = list()
     for i_event in range(100):
         str_i_event = str(i_event)
         if len(str_i_event) == 1:
