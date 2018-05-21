@@ -14,10 +14,10 @@ import seaborn as sns
 if __name__ == "__main__":
 
     # training and test data folder paths
-    path_to_train = "../data/raw/train_sample/train_100_events"
+    path_to_train = "../../data/raw/train_sample/train_100_events"
 
     # chose a single event to work with
-    event_prefix = "event000001010"
+    event_prefix = "event000001000"
 
     # read data
     hits, cells, particles, truth = load_event(os.path.join(path_to_train, event_prefix))
@@ -28,35 +28,35 @@ if __name__ == "__main__":
                  + truth.memory_usage(index=True).sum())
     print('{} memory usage {:.2f} MB'.format(event_prefix, mem_bytes / 2 ** 20))
 
-    # plot x-y plane
-    g = sns.jointplot(hits.x, hits.y, s=1, size=12)
-    g.ax_joint.cla()
-    plt.sca(g.ax_joint)
-
-    volumes = hits.volume_id.unique()
-    for volume in volumes:
-        v = hits[hits.volume_id == volume]
-        plt.scatter(v.x, v.y, s=3, label='volume {}'.format(volume))
-
-    plt.xlabel('X (mm)')
-    plt.ylabel('Y (mm)')
-    plt.legend()
-    plt.show()
-
-    # plot y-z plane
-    g = sns.jointplot(hits.z, hits.y, s=1, size=12)
-    g.ax_joint.cla()
-    plt.sca(g.ax_joint)
-
-    volumes = hits.volume_id.unique()
-    for volume in volumes:
-        v = hits[hits.volume_id == volume]
-        plt.scatter(v.z, v.y, s=3, label='volume {}'.format(volume))
-
-    plt.xlabel('Z (mm)')
-    plt.ylabel('Y (mm)')
-    plt.legend()
-    plt.show()
+    # # plot x-y plane
+    # g = sns.jointplot(hits.x, hits.y, s=1, size=12)
+    # g.ax_joint.cla()
+    # plt.sca(g.ax_joint)
+    #
+    # volumes = hits.volume_id.unique()
+    # for volume in volumes:
+    #     v = hits[hits.volume_id == volume]
+    #     plt.scatter(v.x, v.y, s=3, label='volume {}'.format(volume))
+    #
+    # plt.xlabel('X (mm)')
+    # plt.ylabel('Y (mm)')
+    # plt.legend()
+    # plt.show()
+    #
+    # # plot y-z plane
+    # g = sns.jointplot(hits.z, hits.y, s=1, size=12)
+    # g.ax_joint.cla()
+    # plt.sca(g.ax_joint)
+    #
+    # volumes = hits.volume_id.unique()
+    # for volume in volumes:
+    #     v = hits[hits.volume_id == volume]
+    #     plt.scatter(v.z, v.y, s=3, label='volume {}'.format(volume))
+    #
+    # plt.xlabel('Z (mm)')
+    # plt.ylabel('Y (mm)')
+    # plt.legend()
+    # plt.show()
 
     # plot 3D
     fig = plt.figure(figsize=(12, 12))
