@@ -17,6 +17,7 @@ ToDo: revise objective as particle information is not available for the test set
 New idea: for all particles in all events: fit trajectory, than in the test data, for each hit, calculate the distance to
 all trajectories so that each point has a probability of how like it belongs to a trajectory,
 1) ToDo: read all particle_ids and store for each particle, the number of events, nuimber of hits per event. (done)
+2) ToDo: create some particles trajectories and plot them. Find out if trajectories can be merged across events!
 
 ------------------------------------------------------------------------------------------------------------------------
 
