@@ -20,16 +20,14 @@ if __name__ == "__main__":
     # quit()
 
     # loop through events
-    for i_event in range(100):
-        str_i_event = str(i_event)
-        if len(str_i_event) == 1:
-            event_prefix = "event00000100" + str_i_event
-        elif len(str_i_event) == 2:
-            event_prefix = "event0000010" + str_i_event
+    train_data_folder_path = "../../data/raw/train_sample/train_100_events"
+    # train_data_folder_path = "../../data/raw/test/test"
+    for event_id, hits, cells, particles, truth in load_dataset(train_data_folder_path):
+        # chose specific events
+        if event_id > 1005:
+            break
 
-        # read data
-        train_data_folder_path = "../../data/raw/train_sample/train_100_events"
-        hits, cells, particles, truth = load_event(os.path.join(train_data_folder_path, event_prefix))
+        print("num_particles: {0}".format(np.unique(len(particles["particle_id"].values))))
 
         print(hits.head())
         print(cells.head())
