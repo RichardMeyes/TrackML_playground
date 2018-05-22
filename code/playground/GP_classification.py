@@ -1,5 +1,6 @@
 import h5py
 import time
+import json
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -15,10 +16,10 @@ if __name__ == "__main__":
     # get list of all particle ids
     with h5py.File("../../data/preprocessed/train_sample/train_100_events.hdf5", "r") as f:
         particle_ids = f["particle_ids"][...]
+        particle_ids_labels = f["particle_ids_labels"][...]
 
-    # choose single particle
-    particle_id = particle_ids[1]
-    print("particle_id:", particle_id)
+    with open("../../data/preprocessed/train_sample/lookup_particle_ids_labels.json", "r") as f:
+        label_lookup = json.load(f)
 
     # loop through events and plot trajectory of chosen particle
     train_data_folder_path = "../../data/raw/train_sample/train_100_events"
@@ -30,28 +31,28 @@ if __name__ == "__main__":
         # get labeled data (hits and corresponding labels)
         hits = hits.values[:, :4]
         num_hits = len(hits)
-        print(num_hits)
+        print("num detected hits:", num_hits)
 
-        # get labels
-        labeled_hits = truth.values[:, :2]
-        # find minimun value of class label
-        classes = np.unique(labeled_hits[:, 1])
-        min = np.sort(classes)[1]
-        # adjust all labels that are not 0
-        adjust_idx = np.where(labeled_hits[:, 1] != 0)
-        labeled_hits[adjust_idx, 1] -= min+1
+        # labeling data
+        print("labeling data...")
+        t_start = time.time()
+        training_particles = truth["particle_id"].values
+        hit_labels = np.zeros(len(training_particles))
+        for i in range(len(training_particles)):
+            hit_labels[i] = label_lookup[str(training_particles[i])]
+        t_stop = time.time()
+        print("labeling done! ({0} seconds)".format(t_stop - t_start))
 
+        # train GPC
         train_size = 1000
-        test_size = 500
+        test_size = 300
         data_size = train_size+test_size
 
         # train GPclassifier
-        # training set are the first 100k hits
         X_train = np.array([hits[:train_size, 1], hits[:train_size, 2], hits[:train_size, 3]]).T
-        y_train = labeled_hits[:train_size, 1].astype(int)
-        # test set are the rest hits 20393 hits
+        y_train = hit_labels[:train_size]
         X_test = np.array([hits[train_size:data_size, 1], hits[train_size:data_size, 2], hits[train_size:data_size, 3]]).T
-        y_test = labeled_hits[train_size:data_size, 1].astype(int)
+        y_test = hit_labels[train_size:data_size]
 
         print("starting GPC fit...")
         t_start = time.time()
@@ -59,9 +60,9 @@ if __name__ == "__main__":
         kernel = 1.0 * RBF([1.0, 1.0, 1.0])  # anisotropic
         GPc = GaussianProcessClassifier(kernel=kernel).fit(X_train, y_train)
         t_stop = time.time()
-        print("finished fitting after {0} seconds".format(t_stop-t_start))
+        print("finished fitting after {0} seconds".format(t_stop - t_start))
         print("scoring on test data...")
         t_start = time.time()
         score = GPc.score(X_test, y_test)
         t_stop = time.time()
-        print("score {0} after {1} seconds".format(score, t_stop-t_start))
+        print("score {0} after {1} seconds".format(score, t_stop - t_start))
