@@ -7,6 +7,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from sklearn.preprocessing import StandardScaler
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF
+from sklearn.svm import SVC
 
 from trackml.dataset import load_event, load_dataset
 from trackml.score import score_event
@@ -32,6 +33,7 @@ if __name__ == "__main__":
         hits = hits.values[:, :4]
         num_hits = len(hits)
         print("num detected hits:", num_hits)
+        print("number of unique particles detected in this event: {0}".format(len(np.unique(truth["particle_id"]))))
 
         # labeling data
         print("labeling data...")
@@ -44,25 +46,39 @@ if __name__ == "__main__":
         print("labeling done! ({0} seconds)".format(t_stop - t_start))
 
         # train GPC
-        train_size = 1000
-        test_size = 300
-        data_size = train_size+test_size
+        train_size = 100000
+        test_size = num_hits - train_size
+        data_size = num_hits
 
         # train GPclassifier
-        X_train = np.array([hits[:train_size, 1], hits[:train_size, 2], hits[:train_size, 3]]).T
+        X_train = np.array([hits[:train_size, 1],
+                            hits[:train_size, 2],
+                            hits[:train_size, 3]]).T
         y_train = hit_labels[:train_size]
-        X_test = np.array([hits[train_size:data_size, 1], hits[train_size:data_size, 2], hits[train_size:data_size, 3]]).T
-        y_test = hit_labels[train_size:data_size]
+        X_test = np.array([hits[train_size:, 1],
+                           hits[train_size:, 2],
+                           hits[train_size:, 3]]).T
+        y_test = hit_labels[train_size:]
+        quit()
 
-        print("starting GPC fit...")
-        t_start = time.time()
+        # defining classifiers
+        # Gaussian Process Classifier
         kernel = 1.0 * RBF([1.0])  # isotropic
         kernel = 1.0 * RBF([1.0, 1.0, 1.0])  # anisotropic
-        GPc = GaussianProcessClassifier(kernel=kernel).fit(X_train, y_train)
+        GPC = GaussianProcessClassifier(kernel=kernel)
+        # Support Vector machine
+        kernel = "rbf"
+        SVC = SVC(C=1.0, kernel=kernel)
+
+        # classification
+        print("starting classifier fit...")
+        t_start = time.time()
+        clf = SVC
+        clf.fit(X_train, y_train)
         t_stop = time.time()
         print("finished fitting after {0} seconds".format(t_stop - t_start))
         print("scoring on test data...")
         t_start = time.time()
-        score = GPc.score(X_test, y_test)
+        score = clf.score(X_test, y_test)
         t_stop = time.time()
         print("score {0} after {1} seconds".format(score, t_stop - t_start))
