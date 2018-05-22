@@ -1,5 +1,6 @@
 import os
 import h5py
+import json
 import numpy as np
 
 from trackml.dataset import load_event
@@ -37,10 +38,18 @@ if __name__ == "__main__":
 
     # create labels starting from 0,1,2,...
     num_unique_particles = len(particle_ids)
-    particle_labels = np.zeros((num_unique_particles, 2))
-    particle_labels[:, 0] = particle_ids
-    particle_labels[:, 1] = np.arange(num_unique_particles)
+    particle_ids_labels = np.zeros((num_unique_particles, 2))
+    particle_ids_labels[:, 0] = particle_ids
+    particle_ids_labels[:, 1] = np.arange(num_unique_particles)
 
-    # store labels into hdf5 file
-    with h5py.File("../../data/preprocessed/train_sample/train_100_events.hdf5", "r+") as f:
-        f.create_dataset("particle_ids_labels", data=particle_labels)
+    # # store labels into hdf5 file
+    # with h5py.File("../../data/preprocessed/train_sample/train_100_events.hdf5", "r+") as f:
+    #     f.create_dataset("particle_ids_labels", data=particle_ids_labels)
+    
+    # save as a label_lookup
+    # label data
+    label_lookup = dict()
+    for i in range(len(particle_ids)):
+        label_lookup[str(particle_ids[i])] = int(particle_ids_labels[i, 1])
+    with open("../../data/preprocessed/train_sample/lookup_particle_ids_labels", "w") as f:
+        json.dump(label_lookup, f)
