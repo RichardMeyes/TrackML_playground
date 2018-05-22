@@ -51,5 +51,5 @@ if __name__ == "__main__":
     label_lookup = dict()
     for i in range(len(particle_ids)):
         label_lookup[str(particle_ids[i])] = int(particle_ids_labels[i, 1])
-    with open("../../data/preprocessed/train_sample/lookup_particle_ids_labels", "w") as f:
+    with open("../../data/preprocessed/train_sample/lookup_particle_ids_labels.json", "w") as f:
         json.dump(label_lookup, f)
