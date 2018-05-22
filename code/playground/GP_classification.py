@@ -41,8 +41,8 @@ if __name__ == "__main__":
         adjust_idx = np.where(labeled_hits[:, 1] != 0)
         labeled_hits[adjust_idx, 1] -= min+1
 
-        train_size = 2100
-        test_size = 600
+        train_size = 1000
+        test_size = 500
         data_size = train_size+test_size
 
         # train GPclassifier
@@ -55,7 +55,8 @@ if __name__ == "__main__":
 
         print("starting GPC fit...")
         t_start = time.time()
-        kernel = 1.0 * RBF([1.0, 1.0, 1.0])
+        kernel = 1.0 * RBF([1.0])  # isotropic
+        kernel = 1.0 * RBF([1.0, 1.0, 1.0])  # anisotropic
         GPc = GaussianProcessClassifier(kernel=kernel).fit(X_train, y_train)
         t_stop = time.time()
         print("finished fitting after {0} seconds".format(t_stop-t_start))
