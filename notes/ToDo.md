@@ -12,10 +12,14 @@ ToDo: define proper learning objective
 1) Test some unsupervised methods
 2) determine a possible supervised learning objective that is transferable to the test data
 
-# Notes
+# log
+## 21/05
 ToDo: find out if particle_ids occur repeatedly across events (done)
 within a single event's truth file, one particle may have several hits
 within a single event, there are particle_ids in the particles file that were never detected
 sanity check: there are no particles detected that are not found in the thruth file
 [!!!] across events, a single particle_id may be detected, i.e. information about a single particle and its trajectories can be gathered across events!
 e.g. 1565/1312 particles that are in the particles/truth file in event 1001 are also found in event 1000
+
+## 23/05
+experimented with some naive supervised approaches. GPC just scales horribly with data size, as expected. Testing naive SVC on all hits within a single event.
