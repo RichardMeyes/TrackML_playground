@@ -25,3 +25,5 @@ e.g. 1565/1312 particles that are in the particles/truth file in event 1001 are 
 experimented with some naive supervised approaches. 
 GPC just scales horribly with data size, as expected. Also, computationally SO DEMANDING!
 Testing naive SVC on all hits within a single event.
+... Training time taking more than 10 hours for one event... does not seem to be suitable for the 124 events within the test set.
+Naive classification of single hits does not seem to be a good idea
