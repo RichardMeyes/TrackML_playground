@@ -46,26 +46,25 @@ if __name__ == "__main__":
         print("labeling done! ({0} seconds)".format(t_stop - t_start))
 
         # train GPC
-        train_size = 100000
-        test_size = num_hits - train_size
-        data_size = num_hits
+        train_size = 10000
+        test_size = 2000
+        data_size = train_size + test_size
 
         # train GPclassifier
         X_train = np.array([hits[:train_size, 1],
                             hits[:train_size, 2],
                             hits[:train_size, 3]]).T
         y_train = hit_labels[:train_size]
-        X_test = np.array([hits[train_size:, 1],
-                           hits[train_size:, 2],
-                           hits[train_size:, 3]]).T
-        y_test = hit_labels[train_size:]
-        quit()
+        X_test = np.array([hits[train_size:data_size, 1],
+                           hits[train_size:data_size, 2],
+                           hits[train_size:data_size, 3]]).T
+        y_test = hit_labels[train_size:data_size]
 
         # defining classifiers
         # Gaussian Process Classifier
-        kernel = 1.0 * RBF([1.0])  # isotropic
-        kernel = 1.0 * RBF([1.0, 1.0, 1.0])  # anisotropic
-        GPC = GaussianProcessClassifier(kernel=kernel)
+        # kernel = 1.0 * RBF([1.0])  # isotropic
+        # kernel = 1.0 * RBF([1.0, 1.0, 1.0])  # anisotropic
+        # GPC = GaussianProcessClassifier(kernel=kernel)
         # Support Vector machine
         kernel = "rbf"
         SVC = SVC(C=1.0, kernel=kernel)
