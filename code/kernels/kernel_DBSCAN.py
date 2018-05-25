@@ -34,7 +34,7 @@ class Clusterer(object):
     def predict(self, hits):
         X = self._preprocess(hits)
 
-        cl = DBSCAN(eps=self.eps, min_samples=1, algorithm='kd_tree')
+        cl = DBSCAN(eps=self.eps, min_samples=3, algorithm='kd_tree')
         labels = cl.fit_predict(X)
 
         return labels
@@ -49,7 +49,7 @@ def create_one_event_submission(event_id, hits, labels):
 if __name__ == "__main__":
 
     # training and test data folder paths
-    path_to_train = "../data/raw/train_sample/train_100_events"
+    path_to_train = "../../data/raw/train_sample/train_100_events"
 
     # chose a single event to work with
     event_prefix = "event000001000"
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     hits, cells, particles, truth = load_event(os.path.join(path_to_train, event_prefix))
 
     # perform clustering
-    model = Clusterer(eps=0.008)
+    model = Clusterer(eps=0.006)
     labels = model.predict(hits)
 
     print(labels)
