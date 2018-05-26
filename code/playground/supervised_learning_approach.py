@@ -8,9 +8,12 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF
 from sklearn.svm import SVC
+from sklearn.ensemble import GradientBoostingClassifier
 
 from trackml.dataset import load_event, load_dataset
 from trackml.score import score_event
+import xgboost
+
 
 if __name__ == "__main__":
 
@@ -46,8 +49,8 @@ if __name__ == "__main__":
         print("labeling done! ({0} seconds)".format(t_stop - t_start))
 
         # train GPC
-        train_size = 10000
-        test_size = 2000
+        train_size = 1000
+        test_size = 100
         data_size = train_size + test_size
 
         # train GPclassifier
@@ -66,13 +69,14 @@ if __name__ == "__main__":
         # kernel = 1.0 * RBF([1.0, 1.0, 1.0])  # anisotropic
         # GPC = GaussianProcessClassifier(kernel=kernel)
         # Support Vector machine
-        kernel = "rbf"
-        SVC = SVC(C=1.0, kernel=kernel)
+        # kernel = "rbf"
+        # SVC = SVC(C=1.0, kernel=kernel)
+        GBC = xgboost.XGBClassifier()
 
         # classification
         print("starting classifier fit...")
         t_start = time.time()
-        clf = SVC
+        clf = GBC
         clf.fit(X_train, y_train)
         t_stop = time.time()
         print("finished fitting after {0} seconds".format(t_stop - t_start))
