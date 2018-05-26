@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import os
@@ -8,7 +7,6 @@ from trackml.score import score_event
 
 from sklearn.preprocessing import StandardScaler
 import hdbscan
-from scipy import stats
 from tqdm import tqdm
 from sklearn.cluster import DBSCAN
 
@@ -82,7 +80,7 @@ class Clusterer(object):
         dfh['z1'] = dfh['z'] / dfh['rt']
         dz = 0.00012
         stepdz = 0.000005
-        for ii in tqdm(range(24)):
+        for ii in tqdm(range(24), desc="looping through angles"):
             dz = dz + ii * stepdz
             dfh['a1'] = dfh['a0'] + dz * dfh['z'] * np.sign(dfh['z'].values)
             dfh['x1'] = dfh['a1'] / dfh['z1']
@@ -107,7 +105,7 @@ class Clusterer(object):
                 dfh['N1'] = dfh.groupby('s1')['s1'].transform('count')
         dz = 0.00012
         stepdz = -0.000005
-        for ii in tqdm(range(24)):
+        for ii in tqdm(range(24), desc="looping through angles"):
             dz = dz + ii * stepdz
             dfh['a1'] = dfh['a0'] + dz * dfh['z'] * np.sign(dfh['z'].values)
             dfh['x1'] = dfh['a1'] / dfh['z1']
@@ -189,25 +187,25 @@ if __name__ == "__main__":
     #     print("Score for event %d: %.8f" % (event_id, score))
     # print('Mean score: %.8f' % (np.mean(dataset_scores)))
 
-    # ######################################################################
-    # # for test data
-    # path_to_test = "../input/test"
-    # test_dataset_submissions = []
-    #
-    # create_submission = True  # True for submission
-    # if create_submission:
-    #     for event_id, hits, cells in load_dataset(path_to_test, parts=['hits', 'cells']):
-    #         # Track pattern recognition
-    #         model = Clusterer()
-    #         labels = model.predict(hits)
-    #
-    #         # Prepare submission for an event
-    #         one_submission = create_one_event_submission(event_id, hits, labels)
-    #         test_dataset_submissions.append(one_submission)
-    #
-    #         print('Event ID: ', event_id)
-    #
-    #     # Create submission file
-    #     submission = pd.concat(test_dataset_submissions, axis=0)
-    #     submission.to_csv('submission.csv', index=False)
+    ######################################################################
+    # for test data
+    path_to_test = "../../data/raw/test/test"
+    test_dataset_submissions = []
+
+    create_submission = True  # True for submission
+    if create_submission:
+        for event_id, hits, cells in load_dataset(path_to_test, parts=['hits', 'cells']):
+            # Track pattern recognition
+            model = Clusterer()
+            labels = model.predict(hits)
+
+            # Prepare submission for an event
+            one_submission = create_one_event_submission(event_id, hits, labels)
+            test_dataset_submissions.append(one_submission)
+
+            print('Event ID: ', event_id)
+
+        # Create submission file
+        submission = pd.concat(test_dataset_submissions, axis=0)
+        submission.to_csv('../../data/submission/submission.csv', index=False)
 
