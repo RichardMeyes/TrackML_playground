@@ -11,6 +11,20 @@ from tqdm import tqdm
 from sklearn.cluster import DBSCAN
 
 
+def score_event_fast(truth, submission):
+    truth = truth[['hit_id', 'particle_id', 'weight']].merge(submission, how='left', on='hit_id')
+    df = truth.groupby(['track_id', 'particle_id']).hit_id.count().to_frame('count_both').reset_index()
+    truth = truth.merge(df, how='left', on=['track_id', 'particle_id'])
+
+    df1 = df.groupby(['particle_id']).count_both.sum().to_frame('count_particle').reset_index()
+    truth = truth.merge(df1, how='left', on='particle_id')
+    df1 = df.groupby(['track_id']).count_both.sum().to_frame('count_track').reset_index()
+    truth = truth.merge(df1, how='left', on='track_id')
+    truth.count_both *= 2
+    score = truth[(truth.count_both > truth.count_particle) & (truth.count_both > truth.count_track)].weight.sum()
+    return score
+
+
 class Clusterer(object):
     def __init__(self, rz_scales=[0.65, 0.965, 1.528]):
         self.rz_scales = rz_scales
@@ -158,14 +172,19 @@ if __name__ == "__main__":
     # read data
     hits, cells, particles, truth = load_event(os.path.join(path_to_train, event_prefix))
 
+    # ToDo: try separating first order and second order particles!
+
     model = Clusterer()
     labels = model.predict(hits)
+
 
     ######################################################################
     # single event
     submission = create_one_event_submission(0, hits, labels)
     score = score_event(truth, submission)
-    print("Your score: ", score)
+    score_fast = score_event_fast(truth, submission)
+    print("Your score: ",)
+    print("Your score: ", score, "Your fast score: ", score_fast)
 
     # ######################################################################
     # # all events in the training data
@@ -189,10 +208,9 @@ if __name__ == "__main__":
 
     ######################################################################
     # for test data
+    create_submission = False  # True for submission
     path_to_test = "../../data/raw/test/test"
     test_dataset_submissions = []
-
-    create_submission = True  # True for submission
     if create_submission:
         for event_id, hits, cells in load_dataset(path_to_test, parts=['hits', 'cells']):
             # Track pattern recognition
