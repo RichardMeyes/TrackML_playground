@@ -21,7 +21,7 @@ if __name__ == "__main__":
         particle_ids = f["particle_ids"][...]
 
     # choose single particle
-    particle_id = particle_ids[1]
+    particle_id = particle_ids[2]
     print("particle_id:", particle_id)
 
     # create figure
