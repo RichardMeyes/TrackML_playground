@@ -8,7 +8,7 @@ from trackml.score import score_event
 
 
 def cart2spherical(coords):
-    r = np.linalg.norm(coords, axis=1)
+    r = np.linalg.norm(coords, ax1is=1)
     theta = np.degrees(np.arccos(coords[:, 2] / r))
     phi = np.degrees(np.arctan2(coords[:, 1], coords[:, 0]))
     return np.vstack((r, theta, phi)).T
@@ -25,10 +25,13 @@ if __name__ == "__main__":
         print("event:", event_id)
 
         # create figure
-        fig = plt.figure(figsize=(8, 8))
+        fig = plt.figure(figsize=(16, 8))
         fig.subplots_adjust(bottom=0.02, left=0.02, top=0.98, right=0.98)
-        ax = fig.add_subplot(111, projection='3d')
-        ax.plot(hits.x.values, hits.y.values, hits.z.values, lw=0, marker=',', c='k')
+        ax1 = fig.add_subplot(121, projection='3d')
+        ax2 = fig.add_subplot(122, projection='3d', sharex=ax1, sharey=ax1, sharez=ax1)
+
+        # plpot hits
+        ax1.plot(hits.x.values, hits.y.values, hits.z.values, lw=0, marker=',', c='k')
 
         # get all particles id for event
         event_particle_ids = np.unique(truth["particle_id"].values)
@@ -43,14 +46,31 @@ if __name__ == "__main__":
             trajectory[:, 1] = hits.y.values[hit_ids_mask]
             trajectory[:, 2] = hits.z.values[hit_ids_mask]
 
-            # print("particle {0}, num_hits {1}".format(particle_id, len(hit_ids)))
+            # plot spurious hits and trajectories
             if i_particle == 0:
-                ax.plot(trajectory[:, 0], trajectory[:, 1], trajectory[:, 2], lw=0, marker=',', c='r')
+                ax1.plot(trajectory[:, 0], trajectory[:, 1], trajectory[:, 2], lw=0, marker=',', c='r')
             else:
-                ax.plot(trajectory[:, 0], trajectory[:, 1], trajectory[:, 2], lw=1, marker=',', c='b')
+                ax1.plot(trajectory[:, 0], trajectory[:, 1], trajectory[:, 2], lw=1, marker=',', c='b')
 
-        ax.set_xlabel('X (millimeters)')
-        ax.set_ylabel('Y (millimeters)')
-        ax.set_zlabel('Z (millimeters)')
+        # plot sliced cones
+        hits = hits.assign(d=np.sqrt(hits.x**2 + hits.y**2 + hits.z**2))
+        hits = hits.assign(r=np.sqrt(hits.x ** 2 + hits.y**2))
+        hits = hits.assign(arctan2=np.arctan2(hits.z, hits.r))
+
+        angle = 75
+        delta_angle = 0.5
+        cone_sliced_hits = hits.loc[(hits.arctan2 > (angle - delta_angle)/180*np.pi)
+                                    & (hits.arctan2 < (angle + delta_angle)/180*np.pi)]
+
+        ax2.plot(cone_sliced_hits.x.values, cone_sliced_hits.y.values, cone_sliced_hits.z.values,
+                 lw=0, marker=',', c='k')
+
+        for ax in [ax1, ax2]:
+            ax.set_xlabel('X (millimeters)')
+            ax.set_ylabel('Y (millimeters)')
+            ax.set_zlabel('Z (millimeters)')
+            ax1.set_xlim(-1000, 1000)
+            ax1.set_ylim(-1000, 1000)
+            ax1.set_zlim(-3000, 3000)
 
         plt.show()
