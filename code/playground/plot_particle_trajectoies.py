@@ -21,7 +21,7 @@ if __name__ == "__main__":
         particle_ids = f["particle_ids"][...]
 
     # choose single particle
-    particle_id = particle_ids[2]
+    particle_id = particle_ids[1]
     print("particle_id:", particle_id)
 
     # create figure
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     train_data_folder_path = "../../data/raw/train_sample/train_100_events"
     for event_id, hits, cells, particles, truth in load_dataset(train_data_folder_path):
         # chose specific events
-        if event_id > 1030:
+        if event_id > 1005:
             break
         print("event:", event_id)
         particle_id_idx = np.where(truth["particle_id"] == particle_id)[0]
