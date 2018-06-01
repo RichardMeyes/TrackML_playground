@@ -7,6 +7,8 @@ from trackml.dataset import load_event, load_dataset
 from trackml.score import score_event
 
 from sklearn.manifold import TSNE
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import DBSCAN
 
 
 def cart2spherical(coords):
@@ -37,7 +39,7 @@ if __name__ == "__main__":
         fig2.subplots_adjust(bottom=0.08, left=0.05, top=0.95, right=0.98)
         ax4 = fig2.add_subplot(131)
         ax5 = fig2.add_subplot(132)
-        ax6 = fig2.add_subplot(133)
+        ax6 = fig2.add_subplot(133, sharex=ax5, sharey=ax5)
 
         # plpot hits
         spurious_hits_mask = truth["particle_id"].values == 0
@@ -69,7 +71,7 @@ if __name__ == "__main__":
         hits = hits.assign(arctan2=np.arctan2(hits.z, hits.r))
 
         angle = 85.0
-        delta_angle = 0.5
+        delta_angle = 0.1
         cone_sliced_hits = hits.loc[(hits.arctan2 > (angle - delta_angle)/180*np.pi)
                                     & (hits.arctan2 < (angle + delta_angle)/180*np.pi)]
         cone_sliced_truth = truth.loc[(hits.arctan2 > (angle - delta_angle) / 180 * np.pi)
@@ -120,14 +122,47 @@ if __name__ == "__main__":
         #          rtp[:, 2][spurious_hits_mask], lw=0, marker='.', c='r', alpha=0.2)
 
         # tSNE in spherical coordinates
-        tSNE = TSNE(n_components=2, perplexity=30, init='pca')
-        t0 = time.time()
-        print("tSNE fitting...")
-        Y = tSNE.fit_transform(rtp[:, 1:])
-        t1 = time.time()
-        print("...done! {0} seconds".format(t1 - t0))
-        ax5.plot(Y[:, 0], Y[:, 1], lw=0, c='k', marker='o')
+        use_tSNE = False
+        if use_tSNE:
+            tSNE = TSNE(n_components=2, perplexity=30, init='random')
+            t0 = time.time()
+            print("tSNE fitting...")
+            Y = tSNE.fit_transform(rtp[:, 1:])
+            t1 = time.time()
+            print("...done! {0} seconds".format(t1 - t0))
+            # ax5.plot(Y[:, 0], Y[:, 1], lw=0, c='k', marker='o')
+            cl = DBSCAN(eps=0.35, min_samples=3, algorithm='kd_tree')
+            t0 = time.time()
+            print("DBSCAN fitting...")
+            labels = cl.fit_predict(Y)
+            t1 = time.time()
+            print("...done! {0} seconds".format(t1 - t0))
+            for label in np.unique(labels):
+                label_mask = labels == label
+                if label == -1:
+                    ax5.plot(Y[:, 0][label_mask], Y[:, 1][label_mask], lw=0, marker='x', c='k')
+                else:
+                    ax5.plot(Y[:, 0][label_mask], Y[:, 1][label_mask], lw=0, marker='o')
+        else:
+            ss = StandardScaler()
+            Y = ss.fit_transform(rtp[:, 1:])
+            def custom_metric(x, y):
+                d = np.sqrt((x[0] - y[0])**2 + 500*(x[1] - y[1])**2)
+                return d
+            cl = DBSCAN(eps=0.3, min_samples=3, algorithm='auto', metric=custom_metric)
+            t0 = time.time()
+            print("DBSCAN fitting...")
+            labels = cl.fit_predict(Y)
+            t1 = time.time()
+            print("...done! {0} seconds".format(t1 - t0))
+            for label in np.unique(labels):
+                label_mask = labels == label
+                if label == -1:
+                    ax5.plot(Y[:, 0][label_mask], Y[:, 1][label_mask], lw=0, marker='x', c='k')
+                else:
+                    ax5.plot(Y[:, 0][label_mask], Y[:, 1][label_mask], lw=0, marker='o')
 
+        np.random.shuffle(cone_particle_ids)
         for particle_id in cone_particle_ids:
             # skip spurious particles
             if particle_id == 0:
@@ -150,7 +185,10 @@ if __name__ == "__main__":
             # plot
             ax3.plot(trajectory_trans[:, 0], trajectory_trans[:, 1], trajectory_trans[:, 2], lw=1, marker=',')
             ax4.plot(trajectory_trans_sphe[:, 1], trajectory_trans_sphe[:, 2], lw=0, marker='.')
-            ax6.plot(Y[:, 0][hit_ids_mask], Y[:, 1][hit_ids_mask], lw=0, marker='o')
+            if use_tSNE:
+                ax6.plot(Y[:, 0][hit_ids_mask], Y[:, 1][hit_ids_mask], lw=0, marker='o')
+            else:
+                ax6.plot(Y[:, 0][hit_ids_mask], Y[:, 1][hit_ids_mask], lw=0, marker='o')
 
         for ax in [ax1, ax2]:
             ax.set_xlabel('X (millimeters)')
@@ -163,9 +201,10 @@ if __name__ == "__main__":
         ax3.set_xlabel('r = x**2 + y**2 (millimeters)')
         ax3.set_ylabel('sine(arctan(y/x))')
         ax3.set_zlabel('cosine(arctan(y/x))')
-        ax4.set_xlabel('theta (degrees')
-        ax4.set_ylabel('phi (degrees')
-        ax5.set_title(str(tSNE.kl_divergence_))
-        ax6.set_title(str(tSNE.kl_divergence_))
+        ax4.set_xlabel('theta (degrees)')
+        ax4.set_ylabel('phi (degrees)')
+        if use_tSNE:
+            ax5.set_title(str(tSNE.kl_divergence_))
+            ax6.set_title(str(tSNE.kl_divergence_))
 
         plt.show()
